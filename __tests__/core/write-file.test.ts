@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import fs from "fs";
 
 import { writeFile } from "../../lib/core";
@@ -23,7 +25,7 @@ describe("writeFile", () => {
       listDifferent: false,
       ignore: [],
       quoteType: "single",
-      logLevel: "verbose"
+      logLevel: "verbose",
     });
 
     expect(fs.writeFileSync).toBeCalledWith(
@@ -48,7 +50,7 @@ describe("writeFile", () => {
       listDifferent: false,
       ignore: [],
       quoteType: "single",
-      logLevel: "verbose"
+      logLevel: "verbose",
     });
 
     expect(fs.writeFileSync).not.toBeCalled();

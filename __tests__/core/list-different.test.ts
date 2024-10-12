@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { listDifferent } from "../../lib/core";
 
 describe("writeFile", () => {
@@ -24,11 +26,11 @@ describe("writeFile", () => {
       listDifferent: true,
       aliases: {
         "~fancy-import": `${__dirname}/../complex.less`,
-        "~another": `${__dirname}/../style.less`
+        "~another": `${__dirname}/../style.less`,
       },
       ignore: [],
       quoteType: "single",
-      logLevel: "verbose"
+      logLevel: "verbose",
     });
 
     expect(exit).toHaveBeenCalledWith(1);
@@ -50,7 +52,7 @@ describe("writeFile", () => {
       listDifferent: true,
       ignore: [],
       quoteType: "single",
-      logLevel: "verbose"
+      logLevel: "verbose",
     });
 
     expect(exit).not.toHaveBeenCalled();

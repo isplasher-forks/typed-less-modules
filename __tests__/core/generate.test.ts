@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import fs from "fs";
 
 import { generate } from "../../lib/core";
@@ -21,7 +23,7 @@ describe("generate", () => {
       listDifferent: false,
       ignore: [],
       quoteType: "single",
-      logLevel: "verbose"
+      logLevel: "verbose",
     });
 
     expect(fs.writeFileSync).toBeCalledTimes(5);

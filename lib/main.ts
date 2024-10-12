@@ -1,32 +1,26 @@
 import fs from "fs";
 import path from "path";
 import slash from "slash";
-
 import {
-  watch,
-  MainOptions,
+  CLIOptions,
   generate,
   listDifferent,
-  setAlertsLogLevel
+  setAlertsLogLevel,
+  watch,
 } from "./core";
+import { loadConfig, mergeOptions } from "./load";
 
-export const main = async (pattern: string, options: MainOptions) => {
-  // config file
-  const configFilePath = path.join(process.cwd(), "tlm.config.js");
-  if (options.config && fs.existsSync(configFilePath)) {
-    options = {
-      ...options,
-      ...require(configFilePath)
-    };
-    if (options.pattern) {
-      pattern = options.pattern;
-    }
-  }
+export const main = async (
+  pattern: string,
+  cliOptions: Partial<CLIOptions>
+) => {
+  const configOptions = await loadConfig();
+  const options = mergeOptions(cliOptions, configOptions);
 
   setAlertsLogLevel(options.logLevel);
 
   // When the provided pattern is a directory construct the proper glob to find
-  // all .less files within that directory. Also, add the directory to the
+  // all .scss files within that directory. Also, add the directory to the
   // included paths so any imported with a path relative to the root of the
   // project still works as expected without adding many include paths.
   if (fs.existsSync(pattern) && fs.lstatSync(pattern).isDirectory()) {
@@ -36,12 +30,12 @@ export const main = async (pattern: string, options: MainOptions) => {
       options.includePaths = [pattern];
     }
 
-    // When the pattern provide is a directory, assume all .less files within.
+    // When the pattern provide is a directory, assume all .scss files within.
     pattern = slash(path.resolve(pattern, "**/*.less"));
   }
 
   if (options.listDifferent) {
-    listDifferent(pattern, options);
+    await listDifferent(pattern, options);
     return;
   }
 

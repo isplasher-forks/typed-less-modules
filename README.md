@@ -1,11 +1,5 @@
 # 🎁 typed-less-modules
 
-[![Travis Build Status](https://img.shields.io/travis/com/qiniu/typed-less-modules/master?style=for-the-badge)](https://travis-ci.com/qiniu/typed-less-modules)
-[![Codecov](https://img.shields.io/codecov/c/github/qiniu/typed-less-modules?style=for-the-badge)](https://codecov.io/gh/qiniu/typed-less-modules)
-[![npm](https://img.shields.io/npm/v/@qiniu/typed-less-modules?color=%23c7343a&label=npm&style=for-the-badge)](https://www.npmjs.com/package/@qiniu/typed-less-modules)
-[![GitHub stars](https://img.shields.io/github/stars/qiniu/typed-less-modules.svg?style=for-the-badge)](https://github.com/qiniu/typed-less-modules/stargazers)
-[![license](https://img.shields.io/github/license/qiniu/typed-less-modules?style=for-the-badge)](https://github.com/qiniu/typed-less-modules/blob/master/LICENSE)
-
 Generate TypeScript definitions (`.d.ts`) files for CSS Modules that are written in LESS (`.less`).
 
 **typed-less-modules** 用于将 `.less` 转换为对应的 `.d.ts` TypeScript 类型声明文件。
@@ -248,19 +242,19 @@ module.exports = {
     // 映射至多路径
     "~": [
       path.resolve(__dirname, "node_modules"),
-      path.resolve(__dirname, "src")
+      path.resolve(__dirname, "src"),
     ],
     // 映射至单路径
     "@": path.resolve(__dirname, "some-dir"),
     // 自定义映射规则
     "abc-module"(filePath) {
       return filePath.replace("abc-module", "xxx-path");
-    }
+    },
   },
   // less.render options 参数
   lessRenderOptions: {
-    javascriptEnabled: true
-  }
+    javascriptEnabled: true,
+  },
 };
 ```
 
@@ -289,6 +283,6 @@ For examples, see the `examples` directory:
 
 ## Alternatives
 
-This package was forked from [typed-scss-modules](https://github.com/skovy/typed-scss-modules).
+This package was forked from [typed-scss-modules]).
 
 This package is currently used as a CLI. There are also [packages that generate types as a webpack loader](https://github.com/Jimdo/typings-for-css-modules-loader).

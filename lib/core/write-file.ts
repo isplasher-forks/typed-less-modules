@@ -1,42 +1,76 @@
 import fs from "fs";
-
-import { alerts } from "./alerts";
-import {
-  getTypeDefinitionPath,
-  classNamesToTypeDefinitions
-} from "../typescript";
+import path from "path";
 import { fileToClassNames } from "../less";
-import { MainOptions } from "./types";
+import {
+  classNamesToTypeDefinitions,
+  getTypeDefinitionPath,
+} from "../typescript";
+import { alerts } from "./alerts";
+import { removeTypeDefinitionFile } from "./remove-file";
+import { CLIOptions } from "./types";
 
 /**
  * Given a single file generate the proper types.
  *
- * @param file the LESS file to generate types for
+ * @param file the SCSS file to generate types for
  * @param options the CLI options
  */
-export const writeFile = (
+export const writeFile = async (
   file: string,
-  options: MainOptions
+  options: CLIOptions
 ): Promise<void> => {
-  return fileToClassNames(file, options)
-    .then(classNames => {
-      const typeDefinition = classNamesToTypeDefinitions({
-        classNames: classNames,
-        ...options
-      });
+  try {
+    const classNames = await fileToClassNames(file, options);
+    const typeDefinition = await classNamesToTypeDefinitions({
+      classNames,
+      file,
+      ...options,
+    });
 
-      if (!typeDefinition) {
+    const typesPath = getTypeDefinitionPath(file, options);
+    const typesExist = fs.existsSync(typesPath);
+
+    // Avoid outputting empty type definition files.
+    // If the file exists and the type definition is now empty, remove the file.
+    if (!typeDefinition) {
+      if (typesExist) {
+        removeTypeDefinitionFile(file, options);
+      } else {
         alerts.notice(`[NO GENERATED TYPES] ${file}`);
+      }
+      return;
+    }
+
+    // Avoid re-writing the file if it hasn't changed.
+    // First by checking the file modification time, then
+    // by comparing the file contents.
+    if (options.updateStaleOnly && typesExist) {
+      const fileModified = fs.statSync(file).mtime;
+      const typeDefinitionModified = fs.statSync(typesPath).mtime;
+
+      if (fileModified < typeDefinitionModified) {
         return;
       }
 
-      const path = getTypeDefinitionPath(file);
+      const existingTypeDefinition = fs.readFileSync(typesPath, "utf8");
+      if (existingTypeDefinition === typeDefinition) {
+        return;
+      }
+    }
 
-      fs.writeFileSync(path, typeDefinition);
-      alerts.success(`[GENERATED TYPES] ${path}`);
-    })
-    .catch(({ message, filename, line, column }: Less.RenderError) => {
-      const location = filename ? `(${filename}[${line}:${column}])` : "";
-      alerts.error(`${message} ${location}`);
-    });
+    // Files can be written to arbitrary directories and need to
+    // be nested to match the project structure so it's possible
+    // there are multiple directories that need to be created.
+    const dirname = path.dirname(typesPath);
+    if (!fs.existsSync(dirname)) {
+      fs.mkdirSync(dirname, { recursive: true });
+    }
+
+    fs.writeFileSync(typesPath, typeDefinition);
+    alerts.success(`[GENERATED TYPES] ${typesPath}`);
+  } catch (error) {
+    const { message, filename, line, column } = error as Less.RenderError;
+    const location = filename ? ` (${filename}[${line}:${column}])` : "";
+    alerts.error(`${message}${location}`);
+  }
 };
