@@ -1,6 +1,6 @@
 {
   "name": "@isplasher/typed-less-modules",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "TypeScript type definition generator for LESS CSS Modules",
   "main": "index.js",
   "license": "Apache",
@@ -57,8 +57,8 @@
     "prettier": "^2.8.8",
     "semantic-release": "^15.13.31",
     "ts-jest": "^23.10.5",
-    "ts-node": "^8.0.2",
-    "typescript": "^3.3.3"
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
   },
   "dependencies": {
     "bundle-require": "^3.0.4",
