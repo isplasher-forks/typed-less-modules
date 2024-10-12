@@ -1,2 +1,2 @@
-export const text: string;
-export const textHighlighted: string;
+export declare const text: string;
+export declare const textHighlighted: string;

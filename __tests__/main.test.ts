@@ -10,6 +10,43 @@ describe("main", () => {
     console.log = jest.fn(); // avoid console logs showing up
   });
 
+  test("generates types for all .less files with default export when the pattern is a directory", async () => {
+    const pattern = `${__dirname}`;
+
+    await main(pattern, {
+      watch: false,
+      ignoreInitial: false,
+      exportType: "default",
+      exportTypeName: "ClassNames",
+      exportTypeInterface: "Styles",
+      listDifferent: false,
+      ignore: [],
+      quoteType: "single",
+      logLevel: "verbose",
+    });
+
+    const expectedDirname = slash(__dirname);
+
+    expect(fs.writeFileSync).toBeCalledTimes(5);
+
+    expect(fs.writeFileSync).toBeCalledWith(
+      `${expectedDirname}/complex.less.d.ts`,
+      `export type Styles = {
+  nestedAnother: string;
+  nestedClass: string;
+  someStyles: string;
+};
+export type ClassNames = keyof Styles;
+declare const styles: Styles;
+export default styles;
+`
+    );
+    expect(fs.writeFileSync).toBeCalledWith(
+      `${expectedDirname}/style.less.d.ts`,
+      "export declare const someClass: string;\n"
+    );
+  });
+
   test("generates types for all .less files when the pattern is a directory", async () => {
     const pattern = `${__dirname}`;
 
@@ -22,7 +59,7 @@ describe("main", () => {
       listDifferent: false,
       ignore: [],
       quoteType: "single",
-      logLevel: "verbose"
+      logLevel: "verbose",
     });
 
     const expectedDirname = slash(__dirname);
@@ -31,11 +68,11 @@ describe("main", () => {
 
     expect(fs.writeFileSync).toBeCalledWith(
       `${expectedDirname}/complex.less.d.ts`,
-      "export const someStyles: string;\nexport const nestedClass: string;\nexport const nestedAnother: string;\n"
+      "export declare const nestedAnother: string;\nexport declare const nestedClass: string;\nexport declare const someStyles: string;\n"
     );
     expect(fs.writeFileSync).toBeCalledWith(
       `${expectedDirname}/style.less.d.ts`,
-      "export const someClass: string;\n"
+      "export declare const someClass: string;\n"
     );
   });
 
@@ -51,7 +88,7 @@ describe("main", () => {
       listDifferent: false,
       ignore: ["**/style.less"],
       quoteType: "single",
-      logLevel: "verbose"
+      logLevel: "verbose",
     });
 
     expect(fs.writeFileSync).toBeCalledTimes(3);
@@ -59,7 +96,7 @@ describe("main", () => {
     const expectedDirname = slash(__dirname);
     expect(fs.writeFileSync).toBeCalledWith(
       `${expectedDirname}/complex.less.d.ts`,
-      "export const someStyles: string;\nexport const nestedClass: string;\nexport const nestedAnother: string;\n"
+      "export declare const nestedAnother: string;\nexport declare const nestedClass: string;\nexport declare const someStyles: string;\n"
     );
 
     // Files that should match the ignore pattern.

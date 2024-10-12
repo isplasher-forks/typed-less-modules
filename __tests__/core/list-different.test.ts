@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { listDifferent } from "../../lib/core";
 
 describe("writeFile", () => {
@@ -31,6 +29,9 @@ describe("writeFile", () => {
       ignore: [],
       quoteType: "single",
       logLevel: "verbose",
+      banner: "",
+      updateStaleOnly: false,
+      outputFolder: "",
     });
 
     expect(exit).toHaveBeenCalledWith(1);
@@ -53,6 +54,9 @@ describe("writeFile", () => {
       ignore: [],
       quoteType: "single",
       logLevel: "verbose",
+      banner: "",
+      updateStaleOnly: false,
+      outputFolder: "",
     });
 
     expect(exit).not.toHaveBeenCalled();

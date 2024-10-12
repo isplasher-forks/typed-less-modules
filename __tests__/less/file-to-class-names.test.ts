@@ -4,40 +4,48 @@ describe("fileToClassNames", () => {
   test("it converts a file path to an array of class names (default camel cased)", async () => {
     const result = await fileToClassNames(`${__dirname}/../complex.less`);
 
-    expect(result).toEqual(["someStyles", "nestedClass", "nestedAnother"]);
+    expect(result).toEqual(["nestedAnother", "nestedClass", "someStyles"]);
   });
 
   describe("nameFormat", () => {
     test("it converts a file path to an array of class names with kebab as the name format", async () => {
       const result = await fileToClassNames(`${__dirname}/../complex.less`, {
-        nameFormat: "kebab"
+        nameFormat: "kebab",
       });
 
-      expect(result).toEqual(["some-styles", "nested-class", "nested-another"]);
+      expect(result).toEqual(["nested-another", "nested-class", "some-styles"]);
     });
 
     test("it converts a file path to an array of class names with param as the name format", async () => {
       const result = await fileToClassNames(`${__dirname}/../complex.less`, {
-        nameFormat: "param"
+        nameFormat: "param",
       });
 
-      expect(result).toEqual(["some-styles", "nested-class", "nested-another"]);
+      expect(result).toEqual(["nested-another", "nested-class", "some-styles"]);
     });
 
     test("it converts a file path to an array of class names where only classes with dashes in the names are altered", async () => {
       const result = await fileToClassNames(`${__dirname}/../dashes.less`, {
-        nameFormat: "dashes"
+        nameFormat: "dashes",
       });
 
-      expect(result).toEqual(["App", "Logo", "appHeader"]);
+      expect(result).toEqual(["App", "appHeader", "Logo"]);
+    });
+
+    test("it converts a file path to an array of class names where only classes with snake in the names are altered", async () => {
+      const result = await fileToClassNames(`${__dirname}/../complex.less`, {
+        nameFormat: "snake",
+      });
+
+      expect(result).toEqual(["nested_another", "nested_class", "some_styles"]);
     });
 
     test("it does not change class names when nameFormat is set to none", async () => {
       const result = await fileToClassNames(`${__dirname}/../dashes.less`, {
-        nameFormat: "none"
+        nameFormat: "none",
       });
 
-      expect(result).toEqual(["App", "Logo", "App-Header"]);
+      expect(result).toEqual(["App", "App-Header", "Logo"]);
     });
   });
 
@@ -46,16 +54,16 @@ describe("fileToClassNames", () => {
       const result = await fileToClassNames(`${__dirname}/../aliases.less`, {
         aliases: {
           "~fancy-import": `${__dirname}/../complex.less`,
-          "~another": `${__dirname}/../style.less`
-        }
+          "~another": `${__dirname}/../style.less`,
+        },
       });
 
       expect(result).toEqual([
-        "someStyles",
-        "nestedClass",
+        "myCustomClass",
         "nestedAnother",
+        "nestedClass",
         "someClass",
-        "myCustomClass"
+        "someStyles",
       ]);
     });
   });

@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import fs from "fs";
 
 import { writeFile } from "../../lib/core";
@@ -26,11 +24,15 @@ describe("writeFile", () => {
       ignore: [],
       quoteType: "single",
       logLevel: "verbose",
+      nameFormat: "snake",
+      banner: "",
+      updateStaleOnly: false,
+      outputFolder: "",
     });
 
     expect(fs.writeFileSync).toBeCalledWith(
       typesFile,
-      "export const someClass: string;\n"
+      "export declare const some_class: string;\n"
     );
 
     expect(console.log).toBeCalledWith(
@@ -51,6 +53,9 @@ describe("writeFile", () => {
       ignore: [],
       quoteType: "single",
       logLevel: "verbose",
+      banner: "",
+      updateStaleOnly: false,
+      outputFolder: "",
     });
 
     expect(fs.writeFileSync).not.toBeCalled();

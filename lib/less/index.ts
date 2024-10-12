@@ -5,5 +5,5 @@ export {
   Aliases,
   NameFormat,
   Options,
-  NAME_FORMATS
+  NAME_FORMATS,
 } from "./file-to-class-names";
